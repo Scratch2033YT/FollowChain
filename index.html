@@ -36,6 +36,172 @@
   </footer>
 
   <script src="index.js"></script></script>
-  <style src="style.css"></style>
+  <style>
+     * {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+}
+
+html, body {
+  min-height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  display: block;
+  width: min(40rem, 80%);
+  margin: auto;
+  margin-top: 2rem;
+  margin-bottom: 6rem;
+  background-color: #e6e6e6;
+  padding: 2rem;
+  border-radius: 2rem;
+}
+
+a {
+  color: blue;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.5rem;
+}
+
+form > * {
+  width: fit-content;
+  margin: auto;
+}
+
+form > div > label:not(.all-label) {
+  display: inline-block;
+  width: 20rem;
+  text-align: right;
+  margin-right: 1rem;
+}
+
+div:has(button[type="submit"]) {
+  width: 100%;
+  margin-top: 1.2rem;
+}
+
+div:has(button[type="submit"]) > button[type="submit"] {
+  width: 100%;
+}
+
+.all-label {
+  display: inline-block;
+  width: 8rem;
+}
+
+.all-label:first-child {
+  text-align: right;
+  margin-right: 1rem;
+}
+
+.all-label:last-child {
+  margin-left: 1rem;
+}
+
+#loading-message {
+  width: 100%;
+  height: 10rem;
+  border: 1px solid black;
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
+  display: none;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.result {
+  padding: 1rem;
+  border: 1px solid black;
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
+}
+
+#results {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+}
+
+#home-button {
+  position: fixed;
+  top: 0.6rem;
+  left: 0.6rem;
+  transform: scale(100%);
+  transition: transform 0.7s;
+}
+
+#home-button:hover {
+  transform: scale(110%);
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  padding: 1.5rem;
+  backdrop-filter: blur(0.3rem);
+  border-top: 1px solid black;
+  width: 100%;
+}
+
+:root {
+  --slider-height: 1.5rem;
+  --slider-width: 4rem;
+  --slider-padding: 0.2rem;
+}
+
+.slider-switch > * {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.slider {
+  position: relative ;
+  display: inline-block;
+  width: var(--slider-width);
+  height: calc(var(--slider-height) + var(--slider-padding)*2);
+  background-color: green;
+  border-radius: 30px;
+  transition: background-color 0.5s;
+}
+
+.slider:after {
+  content: '';
+  position: absolute;
+  width: var(--slider-height);
+  height: var(--slider-height);
+  border-radius: 50%;
+  background-color: white;
+  top: var(--slider-padding);
+  left: var(--slider-padding);
+  transition: all 0.5s;
+}
+
+input[type="checkbox"]:checked ~ .slider::after {
+  left: calc(var(--slider-width) - var(--slider-height) - var(--slider-padding));
+}
+
+input[type="checkbox"]:checked ~ .slider {
+  background-color: red;
+}
+
+input[type="checkbox"] {
+  display: none;
+}
+  </style>
 </body>
 </html>
