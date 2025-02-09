@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scratch Follower Chain (REMAKE)</title>
+    <title>Scratch Follower Chain</title>
     <script>
         async function fetchFollowers(username) {
             try {
@@ -19,50 +19,62 @@
             }
         }
 
-        async function fetchFollowerChain(start, end) {
-            let currentUser = start;
-            const chain = [];
-            const visited = new Set(); // To avoid loops
+        async function fetchFollowerChain(start, end, findAll) {
+            let queue = [[start]]; // Queue of chains to process
+            let visited = new Set(); // Track visited users
+            let allChains = []; // Store all possible chains
 
-            while (currentUser !== end) {
-                if (visited.has(currentUser)) {
-                    alert("Loop detected! Ending search.");
-                    break;
-                }
+            while (queue.length > 0) {
+                let currentChain = queue.shift();
+                let currentUser = currentChain[currentChain.length - 1];
+
+                if (visited.has(currentUser)) continue;
                 visited.add(currentUser);
-                chain.push(currentUser);
 
                 const followers = await fetchFollowers(currentUser);
-                if (followers.length === 0) {
-                    alert(`No more followers found for ${currentUser}.`);
-                    break;
-                }
+                if (followers.length === 0) continue;
 
-                // Check if the end user is directly in the followers list
-                const nextUser = followers.find(f => f.username.toLowerCase() === end.toLowerCase());
-                if (nextUser) {
-                    chain.push(nextUser.username);
-                    break;
-                } else {
-                    currentUser = followers[0].username; // Pick the first follower to continue
+                for (let follower of followers) {
+                    let newChain = [...currentChain, follower.username];
+
+                    if (follower.username.toLowerCase() === end.toLowerCase()) {
+                        allChains.push(newChain);
+                        if (!findAll) {
+                            displayChains(allChains);
+                            return; // Stop if we only need one path
+                        }
+                    } else {
+                        queue.push(newChain);
+                    }
                 }
             }
 
-            displayChain(chain);
+            displayChains(allChains);
         }
 
-        function displayChain(chain) {
+        function displayChains(chains) {
             const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = `<h2>Follower Chain:</h2><p>${chain.join(' → ')}</p>`;
+            if (chains.length === 0) {
+                resultDiv.innerHTML = "<h2>No valid chains found.</h2>";
+                return;
+            }
+
+            let chainHTML = "<h2>Follower Chains:</h2><ul>";
+            for (let chain of chains) {
+                chainHTML += `<li>${chain.join(' → ')}</li>`;
+            }
+            chainHTML += "</ul>";
+            resultDiv.innerHTML = chainHTML;
         }
 
         function startChain() {
             const params = new URLSearchParams(window.location.search);
             const startUser = params.get('start');
             const endUser = params.get('end');
+            const findAll = params.get('all') === "1"; // Check if "all=1" is in the URL
 
             if (startUser && endUser) {
-                fetchFollowerChain(startUser, endUser);
+                fetchFollowerChain(startUser, endUser, findAll);
             } else {
                 alert('Please provide both start and end parameters in the URL.');
             }
