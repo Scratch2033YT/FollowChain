@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratch Follower Chain (REMAKE)</title>
+    <script>
+        async function fetchFollowers(username) {
+            try {
+                const response = await fetch(`https://api.scratch.mit.edu/users/${username}/followers`);
+                if (!response.ok) {
+                    console.error(`Error fetching followers for ${username}`);
+                    return [];
+                }
+                return await response.json();
+            } catch (error) {
+                console.error("Error fetching followers:", error);
+                return [];
+            }
+        }
+
+        async function fetchFollowerChain(start, end) {
+            let currentUser = start;
+            const chain = [];
+            const visited = new Set(); // To avoid loops
+
+            while (currentUser !== end) {
+                if (visited.has(currentUser)) {
+                    alert("Loop detected! Ending search.");
+                    break;
+                }
+                visited.add(currentUser);
+                chain.push(currentUser);
+
+                const followers = await fetchFollowers(currentUser);
+                if (followers.length === 0) {
+                    alert(`No more followers found for ${currentUser}.`);
+                    break;
+                }
+
+                // Check if the end user is directly in the followers list
+                const nextUser = followers.find(f => f.username.toLowerCase() === end.toLowerCase());
+                if (nextUser) {
+                    chain.push(nextUser.username);
+                    break;
+                } else {
+                    currentUser = followers[0].username; // Pick the first follower to continue
+                }
+            }
+
+            displayChain(chain);
+        }
+
+        function displayChain(chain) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<h2>Follower Chain:</h2><p>${chain.join(' → ')}</p>`;
+        }
+
+        function startChain() {
+            const params = new URLSearchParams(window.location.search);
+            const startUser = params.get('start');
+            const endUser = params.get('end');
+
+            if (startUser && endUser) {
+                fetchFollowerChain(startUser, endUser);
+            } else {
+                alert('Please provide both start and end parameters in the URL.');
+            }
+        }
+
+        window.onload = startChain;
+    </script>
+</head>
+<body>
+    <h1>Scratch Follower Chain</h1>
+    <div id="result"></div>
+</body>
+</html>
