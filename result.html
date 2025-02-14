@@ -11,9 +11,8 @@
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json', // Accept header set to JSON to specify data type
-                        'Access-Control-Allow-Origin': 'https://scratch.mit.edu',
                     },
-                    mode: 'cors', // CORS mode allows cross-origin requests
+                    mode: 'no-cors', // CORS mode allows cross-origin requests
                     credentials: 'same-origin' // Include credentials (cookies) if needed by the server
                 });
 
